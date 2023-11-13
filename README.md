@@ -10,9 +10,10 @@ IoT Hound
 │   └── network.py              << class representation of a network
 ├── firmwares/   
 │   ├── LICENCE.txt                     
-│   ├── sniffer_heltec_wifi_lora_v2.ino     << firmware for sniffing WiFi frames  
-│   ├── sniffer_nrf52840dongle_802154.hex   << firmware for sniffing IEEE 802.15.4 frames 
-│   └── sniffer_nrf52840dongle_ble.hex      << firmware for sniffing BLE frames
+│   ├── sniffer_heltec_wifi_lora_v2.ino              << firmware for sniffing WiFi frames  
+│   ├── sniffer_nrf52840dongle_802154.hex            << firmware for sniffing IEEE 802.15.4 frames 
+│   └── sniffer_nrf52840dongle_ble.hex               << firmware for sniffing BLE frames for Nordic Semiconductors device
+|   └── nrf_sniffer_for_bluetooth_le_v4.1.1.uf2      << firmware for sniffing BLE frames for Makerdiary device
 ├── gui/                        
 │   ├── device_gui.py           << contain DeviceRow, DeviceTable, SeizedDeviceRow and SeizedDeviceTable classes  
 │   ├── gui.py                  << GUI elements
