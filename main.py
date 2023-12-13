@@ -37,7 +37,9 @@ def main():
     MyBLESniffer = BLESniffer(
         serialport="COM3", baudrate=1000000
     )  # change serialport to match with the corresponding serial port number of BLE sniffer
-    # MyWiFiSniffer = WiFiSniffer(serialport="COM5", baudrate=115200) # change serialport to match with the corresponding serial port number of WiFi sniffer
+    MyWiFiSniffer = WiFiSniffer(
+        serialport="COM9", baudrate=115200
+    )  # change serialport to match with the corresponding serial port number of WiFi sniffer
     MyZigBeeSniffer = ZigBeeSniffer(
         serialport="COM5", baudrate=115200
     )  # change serialport to match with the corresponding serial port number of WiFi sniffer

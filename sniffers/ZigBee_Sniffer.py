@@ -12,7 +12,7 @@ class ZigBeeSniffer(Sniffer.Sniffer, threading.Thread):
 
         self.oldChannels = []
         self.channels = []
-        self.simulation = True
+        self.simulation = False
         valueTimeout = 10
         if self.simulation:
             for i in range(11, 27):
@@ -25,6 +25,7 @@ class ZigBeeSniffer(Sniffer.Sniffer, threading.Thread):
         self.logger = logger
         self.restart = False
         self.datas = [
+            "received: 41D86FCDABFFFFEA5195E0EC3D05967F3B01F04D4C4D4C073600152A0800000000000001AA6CBF182D92A44F25F24A030D5A6BC65C8263279BF82C6D5F18B3EF8F9B5933C1 power: -8 lqi: 48 time: 152849947\r\n",  # 6lowpan broad
             "received: 41cc61ffff8a1800ffffda1c00881800ffffda1c00c107004742fb60400401169c6048656c6c6f20313338203078443838370a0012131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f50515253545556 power: -8 lqi: 48 time: 152849947\r\n",  # 6lowpan
             "received: 4188740601ffffb5a50910fcffb5a501ac35886903006f0d000870130713dd1a11722305452f01fa36119a3711cd5111415333bc6b11af7913468e11b89311af9511819811c3be0505d311 power: -8 lqi: 48 time: 152849947\r\n",  # link status
             "received: 4188c30601ffff65550800fdff3db215be0800130000000018c83db2216da902006f0d008e power: -8 lqi: 48 time: 152849947\r\n",  # device announcement
@@ -137,6 +138,9 @@ class ZigBeeSniffer(Sniffer.Sniffer, threading.Thread):
     def sniff(self):
         if not self.channels:
             return
+
+        self.serial.write("receive\r\n".encode())
+        rec = self.serial.readline()
 
         for channel in self.channels:
             self.logger.debug(f"Sniffing channel {channel}")
@@ -262,6 +266,31 @@ class ZigBeeSniffer(Sniffer.Sniffer, threading.Thread):
                     extAddr = ""
                     for i in range(0, 16, 2):
                         extAddr = message[26 + i : 28 + i] + extAddr
+                        if i != 14:
+                            extAddr = ":" + extAddr
+                    print(extAddr)
+
+                    timestamp = datetime.datetime.now().strftime("%H:%M:%S")
+                    new_device = Device(
+                        address=extAddr,
+                        name=(None, "Hub")[extAddr == "0000"],
+                        RSSI=rssi,
+                        type="6LoWPAN",
+                        channel=channel,
+                        timestamp=timestamp,
+                    )
+
+                    self.addOrUpdateDevice(new_device)
+
+                elif (
+                    frameTypeIEEE != "010"
+                    and addressingModeIEEE == "11"
+                    and destAddrModeIEEE == "10"
+                    and intraPAN == "1"
+                ):
+                    extAddr = ""
+                    for i in range(0, 16, 2):
+                        extAddr = message[14 + i : 16 + i] + extAddr
                         if i != 14:
                             extAddr = ":" + extAddr
                     print(extAddr)

@@ -32,7 +32,7 @@ class GUI:
             foreground="grey",
             borderwidth=5,
             relief=tk.RAISED,
-            padx=5,
+            padx=0,
             pady=5,
             background="white",
         )
@@ -48,7 +48,7 @@ class GUI:
             foreground="grey",
             borderwidth=5,
             relief=tk.RAISED,
-            padx=5,
+            padx=0,
             pady=5,
             background="white",
         )
@@ -64,7 +64,7 @@ class GUI:
             foreground="grey",
             borderwidth=5,
             relief=tk.RAISED,
-            padx=5,
+            padx=0,
             pady=5,
             background="white",
         )
@@ -74,13 +74,13 @@ class GUI:
         # create ZigBee sniffer column
         self.zigbee_sniffer_frame = tk.LabelFrame(
             self.master,
-            text="ZigBee Sniffer",
+            text="IEEE 802.15.4 Sniffer",
             font=("Arial", 20),
             labelanchor="n",
             foreground="grey",
             borderwidth=5,
             relief=tk.RAISED,
-            padx=5,
+            padx=0,
             pady=5,
             background="white",
         )
@@ -96,19 +96,19 @@ class GUI:
             foreground="grey",
             borderwidth=5,
             relief=tk.RAISED,
-            padx=5,
+            padx=0,
             pady=5,
             background="white",
         )
-        self.sixlowpan_sniffer_frame.grid(row=0, column=4, sticky="nsew")
-        self.create_sixlowpan_sniffer_frame()
+        # self.sixlowpan_sniffer_frame.grid(row=0, column=4, sticky="nsew")
+        # self.create_sixlowpan_sniffer_frame()
 
         # adjust row height and column width
-        self.master.grid_columnconfigure(0, weight=2)
-        self.master.grid_columnconfigure(1, weight=2)
-        self.master.grid_columnconfigure(2, weight=2)
-        self.master.grid_columnconfigure(3, weight=1)
-        self.master.grid_columnconfigure(4, weight=2)
+        self.master.grid_columnconfigure(0, minsize=100, weight=2)
+        self.master.grid_columnconfigure(1, minsize=450, weight=2)
+        self.master.grid_columnconfigure(2, minsize=450, weight=2)
+        self.master.grid_columnconfigure(3, minsize=450, weight=1)
+        # self.master.grid_columnconfigure(4, minsize=400, weight=2)
         self.master.grid_rowconfigure(0, weight=1)
 
     # ====================
@@ -123,7 +123,7 @@ class GUI:
             foreground="grey",
             borderwidth=5,
             relief=tk.FLAT,
-            padx=5,
+            padx=0,
             pady=5,
             background="white",
         )
@@ -139,7 +139,7 @@ class GUI:
             foreground="grey",
             borderwidth=5,
             relief=tk.FLAT,
-            padx=5,
+            padx=0,
             pady=5,
             background="white",
         )
@@ -160,7 +160,7 @@ class GUI:
             command=self.on_start_click,
             borderwidth=5,
             relief=tk.RAISED,
-            padx=5,
+            padx=0,
             pady=5,
         )
         self.start_button.grid(row=0, column=0, sticky="n")
@@ -172,7 +172,7 @@ class GUI:
             command=self.on_stop_click,
             borderwidth=5,
             relief=tk.RAISED,
-            padx=5,
+            padx=0,
             pady=5,
         )
         self.stop_button.grid(row=0, column=1, sticky="n")
@@ -225,7 +225,7 @@ class GUI:
             foreground="grey",
             borderwidth=5,
             relief=tk.FLAT,
-            padx=5,
+            padx=0,
             pady=5,
             background="white",
         )
@@ -241,7 +241,7 @@ class GUI:
             foreground="grey",
             borderwidth=5,
             relief=tk.FLAT,
-            padx=5,
+            padx=0,
             pady=5,
             background="white",
         )
@@ -361,7 +361,7 @@ class GUI:
             foreground="grey",
             borderwidth=5,
             relief=tk.FLAT,
-            padx=5,
+            padx=0,
             pady=5,
             background="white",
         )
@@ -415,12 +415,27 @@ class GUI:
             foreground="grey",
             borderwidth=5,
             relief=tk.FLAT,
-            padx=5,
+            padx=0,
             pady=5,
             background="white",
         )
         self.zigbee_devices_frame.grid(row=1, column=0, sticky="nsew")
         self.create_zigbee_devices_frame()
+
+        self.sixlowpan_devices_frame = tk.LabelFrame(
+            self.zigbee_sniffer_frame,
+            text="6LoWPAN Devices",
+            font=("Arial", 14),
+            labelanchor="n",
+            foreground="grey",
+            borderwidth=5,
+            relief=tk.FLAT,
+            padx=0,
+            pady=5,
+            background="white",
+        )
+        self.sixlowpan_devices_frame.grid(row=2, column=0, sticky="nsew")
+        self.create_sixlowpan_devices_frame()
 
         # create ZigBee networks frame
         self.zigbee_networks_frame = tk.LabelFrame(
@@ -431,7 +446,7 @@ class GUI:
             foreground="grey",
             borderwidth=5,
             relief=tk.FLAT,
-            padx=5,
+            padx=0,
             pady=5,
             background="white",
         )
@@ -552,7 +567,7 @@ class GUI:
             foreground="grey",
             borderwidth=5,
             relief=tk.FLAT,
-            padx=5,
+            padx=0,
             pady=5,
             background="white",
         )

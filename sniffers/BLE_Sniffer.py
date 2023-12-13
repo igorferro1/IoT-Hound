@@ -45,9 +45,8 @@ from devices.device import Device
 
 
 class BLESniffer(Sniffer.Sniffer, threading.Thread):
-
     def __init__(self, serialport, baudrate):
-        super().__init__(serialport=serialport,baudrate=baudrate,type='BLE')
+        super().__init__(serialport=serialport, baudrate=baudrate, type="BLE")
         self.packetReader = Packet.PacketReader(portnum=serialport, baudrate=baudrate)
         self.devices = {}
         self.logger = logger
@@ -55,7 +54,7 @@ class BLESniffer(Sniffer.Sniffer, threading.Thread):
 
     # Signal the Sniffer to  for advertising devices by sending the REQ_SCAN_CONT UART packet.
     # This will cause it to stop sniffing any device it is sniffing at the moment.
-    def setup_scan(self, findScanRsp = False, findAux = False, scanCoded = False):
+    def setup_scan(self, findScanRsp=False, findAux=False, scanCoded=False):
         self.packetReader.sendScan(findScanRsp, findAux, scanCoded)
         self.packetReader.sendTK([0])
 
@@ -72,7 +71,7 @@ class BLESniffer(Sniffer.Sniffer, threading.Thread):
 
     def run(self):
         while self.running:
-            """ Start of the code reused """
+            """Start of the code reused"""
             try:
                 packet = self.packetReader.getPacket(timeout=12)
                 if packet == None or not packet.valid:
@@ -81,50 +80,78 @@ class BLESniffer(Sniffer.Sniffer, threading.Thread):
                 logging.info(str(e))
                 packet = None
             except SerialException as e:
-                self.logger.error(f'Error while reading data from BLESniffer serial: {e}')
+                self.logger.error(
+                    f"Error while reading data from BLESniffer serial: {e}"
+                )
                 self.running = False
-            
+
             if packet.id == EVENT_PACKET_DATA_PDU or packet.id == EVENT_PACKET_ADV_PDU:
                 if packet.OK:
                     try:
                         if packet.blePacket.type == PACKET_TYPE_ADVERTISING:
-                            if (packet.blePacket.advType in [0, 1, 2, 4, 6, 7] and
-                                packet.blePacket.advAddress != None and
-                                packet.crcOK and
-                                not packet.direction
-                                ):
-                                """ End of the code reused """
-                                source_address = Packet.listToAddress(packet.blePacket.advAddress)
+                            if (
+                                packet.blePacket.advType in [0, 1, 2, 4, 6, 7]
+                                and packet.blePacket.advAddress != None
+                                and packet.crcOK
+                                and not packet.direction
+                            ):
+                                """End of the code reused"""
+                                source_address = Packet.listToAddress(
+                                    packet.blePacket.advAddress
+                                )
                                 timestamp = datetime.datetime.now().strftime("%H:%M:%S")
 
-                                name = packet.blePacket.name if (packet.blePacket.name!="\"\"" or packet.blePacket.name != "\"") else ""
+                                name = (
+                                    packet.blePacket.name
+                                    if (
+                                        packet.blePacket.name != '""'
+                                        or packet.blePacket.name != '"'
+                                    )
+                                    else ""
+                                )
 
                                 # create a device
-                                new_device = Device(address=source_address, name=name, RSSI=packet.RSSI, type='BLE', timestamp=timestamp)
+                                new_device = Device(
+                                    address=source_address,
+                                    name=name,
+                                    RSSI=packet.RSSI,
+                                    type="BLE",
+                                    timestamp=timestamp,
+                                )
                                 key = new_device.key
 
                                 # Update existing device
-                                if(key in self.devices):
+                                if key in self.devices:
                                     device = self.devices[key]
-                                    if(device.channel != new_device.channel):
+                                    if device.channel != new_device.channel:
                                         device.channel = new_device.channel
-                                        self.update_ble_device_row(key, "channel", int(new_device.channel))                
-                                    if(device.RSSI != new_device.RSSI):
+                                        self.update_ble_device_row(
+                                            key, "channel", int(new_device.channel)
+                                        )
+                                    if device.RSSI != new_device.RSSI:
                                         device.RSSI = new_device.RSSI
-                                        self.update_ble_device_row(key, "RSSI", int(new_device.RSSI))
-                                    if(device.name != new_device.name and new_device.name != ""):
+                                        self.update_ble_device_row(
+                                            key, "RSSI", int(new_device.RSSI)
+                                        )
+                                    if (
+                                        device.name != new_device.name
+                                        and len(new_device.name) != 2
+                                        and len(new_device.name) < 20
+                                    ):
                                         device.name = new_device.name
-                                        self.update_ble_device_row(key, "name", new_device.name)
-                                    if(device.timestamp != new_device.timestamp):
+                                        self.update_ble_device_row(
+                                            key, "name", new_device.name
+                                        )
+                                    if device.timestamp != new_device.timestamp:
                                         device.timestamp = new_device.timestamp
-                                        self.update_ble_device_row(key, "timestamp", new_device.timestamp)
-                                    
+                                        self.update_ble_device_row(
+                                            key, "timestamp", new_device.timestamp
+                                        )
+
                                 # Add new device
                                 else:
                                     self.devices[key] = new_device
                                     self.add_ble_device_row(new_device)
 
-
                     except Exception as e:
                         logging.exception("packet processing error %s" % str(e))
-            

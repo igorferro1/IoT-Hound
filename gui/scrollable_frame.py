@@ -1,12 +1,15 @@
 import tkinter as tk
 
+
 class ScrollableFrame(tk.Frame):
     def __init__(self, master, *args, **kwargs):
         tk.Frame.__init__(self, master, *args, **kwargs)
 
         # Create a canvas and scrollbar
         self.canvas = tk.Canvas(self)
-        self.scrollbar = tk.Scrollbar(self, orient="vertical", command=self.canvas.yview)
+        self.scrollbar = tk.Scrollbar(
+            self, orient="vertical", command=self.canvas.yview
+        )
         self.canvas.configure(yscrollcommand=self.scrollbar.set)
 
         # Use a frame inside the canvas to hold the items
@@ -18,7 +21,9 @@ class ScrollableFrame(tk.Frame):
         self.scrollbar.pack(side="right", fill="both")
 
         # Configure scrolling
-        self._item_frame_id = self.canvas.create_window(self.canvas.winfo_width(), 0, anchor="nw", window=self.item_frame)
+        self._item_frame_id = self.canvas.create_window(
+            self.canvas.winfo_width() / 2, 0, anchor="nw", window=self.item_frame
+        )
 
         self.item_frame.bind("<Configure>", self.on_frame_configure)
         self.canvas.bind("<Configure>", self.on_canvas_configure)
@@ -29,4 +34,3 @@ class ScrollableFrame(tk.Frame):
 
     def on_canvas_configure(self, event):
         self.canvas.itemconfigure(self._item_frame_id, width=self.canvas.winfo_width())
-    
